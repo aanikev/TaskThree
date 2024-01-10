@@ -21,17 +21,24 @@ namespace TaskThree
         }
         public string EditContactInTable()
         {
-            var excelDocument = new GetExcelDocument(_excelpath);
+            try
+            {
+                var excelDocument = new GetExcelDocument(_excelpath);
 
-            var customer = excelDocument.GetCustomers()
-                .Where(x => x.OrganizationName == _organizationName).FirstOrDefault();
+                var customer = excelDocument.GetCustomers()
+                    .Where(x => x.OrganizationName == _organizationName).FirstOrDefault();
 
-            var workbook = new XLWorkbook(_excelpath);
-            workbook.Worksheet(2).CellsUsed()
-            .FirstOrDefault(x => x.Value.ToString() == customer.ContactPerson).Value = _newContactPerson;
+                var workbook = new XLWorkbook(_excelpath);
+                workbook.Worksheet(2).CellsUsed()
+                .FirstOrDefault(x => x.Value.ToString() == customer.ContactPerson).Value = _newContactPerson;
 
-            workbook.SaveAs(_excelpath);
-            return "Контакт изменён";
+                workbook.SaveAs(_excelpath);
+                return "Контакт изменён";
+            }
+            catch 
+            {
+                return "Не удалось изменить контакт";
+            }
         }
     }
 }

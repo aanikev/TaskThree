@@ -34,21 +34,29 @@ namespace TaskThree
 
                 var goldCustomerCode = excelDocument.GetIncidents()
                 .Where(x => x.PostingDate.Month.ToString() == month && x.PostingDate.Year.ToString() == year).GroupBy(x => x.CustomerCode)
-                .OrderByDescending(x => x.Count()).First();
+                .OrderByDescending(x => x.Count()).FirstOrDefault();
+
+                if (goldCustomerCode == null) return "Не удалось определить залаотого клиента";
+
                 var goldCustomer = excelDocument.GetCustomers()
                     .Where(x => x.CustomerCode == goldCustomerCode.Key).FirstOrDefault();
-                return $"Организация золотого криента: {goldCustomer.OrganizationName}\t " +
-                   $"контактное лицо: {goldCustomer.ContactPerson}";
+
+                return $"Организация золотого криента: {goldCustomer.OrganizationName}\n" +
+                   $"Контактное лицо: {goldCustomer.ContactPerson}";
             }
             else
             {
                 var goldCustomerCode = excelDocument.GetIncidents()
                 .Where(x => x.PostingDate.Year.ToString() == _date).GroupBy(x => x.CustomerCode)
-               .OrderByDescending(x => x.Count()).First();
+               .OrderByDescending(x => x.Count()).FirstOrDefault();
+
+                if (goldCustomerCode == null) return "Не удалось определить залаотого клиента";
+
                 var goldCustomer = excelDocument.GetCustomers()
                     .Where(x => x.CustomerCode == goldCustomerCode.Key).FirstOrDefault();
-                return $"Организация золотого криента: {goldCustomer.OrganizationName}\t " +
-                   $"контактное лицо: {goldCustomer.ContactPerson}";
+
+                return $"Организация золотого криента: {goldCustomer.OrganizationName}\n" +
+                   $"Контактное лицо: {goldCustomer.ContactPerson}";
             }
         }
     }

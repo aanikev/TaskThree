@@ -24,18 +24,19 @@ namespace TaskThree
             var productList = excelDocument.GetProducts();
             var customerList = excelDocument.GetCustomers();
             var incidentList = excelDocument.GetIncidents();
+            string result = "";
 
             var product = productList.Where(x => x.Name == _productName).FirstOrDefault();
-            var incidents = incidentList
-                .Where(x => x.ProductCode == product.ProductCode)
-                .Cast<Incident>().ToList();
+            if (product == null)
+                return result = "Нет товаров с таким наименованием";
+
             var IncidentCustomerList = incidentList
                 .Where(x => x.ProductCode == product.ProductCode)
                 .Join(customerList,
                 i => i.CustomerCode,
                 c => c.CustomerCode,
                 (i, c) => new { c.OrganizationName, c.ContactPerson, i.RequiredQuantity, i.PostingDate });
-            string result = "";
+            
             foreach (var customerInfo in IncidentCustomerList)
             {
                 result += $"Название организации:\t {customerInfo.OrganizationName}, \n" +
@@ -44,6 +45,7 @@ namespace TaskThree
                           $"Цена:\t\t\t {customerInfo.RequiredQuantity * product.ProductPricePerUnit}\n" +
                           $"Дата заказа:\t\t {customerInfo.PostingDate} \n\n";
             }
+            if (string.IsNullOrEmpty(result)) return result = "Не удалось выполнить запрос, попробуйте поменять наименование товара";
             return result;
         }
     }
